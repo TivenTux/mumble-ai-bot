@@ -85,21 +85,21 @@ async def handledc():
 #process the message and prompt
 async def msgprocess(text, usern):
     finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named Phoenix.\nPhoenix was made by Tiven and provides helpful answers.\n" + usern + ": "
-    erotisi = finprompt1 + str(text) + "\nPhoenix:"
+    aifinal_question = finprompt1 + str(text) + "\nPhoenix:"
     try:
       if aiselection == 1:
-          apantisi = await skepsi(erotisi, openaikey)
+          ai_response = await aiprocess1(aifinal_question, openaikey)
       else:
-          apantisi = await skepsi2(erotisi, str(text))
+          ai_response = await aiprocess2(aifinal_question, str(text))
     except Exception as e:
         print(e)
-    await omilia(apantisi)
-    await msgsend(apantisi)
+    await speech_synthesize(ai_response)
+    await msgsend(ai_response)
     return
 
 #reply in mumble channel
-async def msgsend(apantisi):
-    msg = apantisi.encode('utf-8', 'ignore').decode('utf-8')
+async def msgsend(ai_response):
+    msg = ai_response.encode('utf-8', 'ignore').decode('utf-8')
     mumblechan = mumble.channels[mumble.users.myself['channel_id']]
     mumblechan.send_text_message(msg)
     return
@@ -140,15 +140,15 @@ async def on_ready():
     await background_loop()
 
 #openAI
-async def skepsi(erotisi, aiapikey):
+async def aiprocess1(aifinal_question, aiapikey):
     try:
         openai.api_key = aiapikey
         response = openai.Completion.create(
             model="text-davinci-003",
-            prompt=erotisi,
-            temperature=0.9,
+            prompt=aifinal_question,
+            temperature=0.5,
             max_tokens=485,
-            top_p=0.3,
+            top_p=0.4,
             frequency_penalty=0.5,
             presence_penalty=0.5,
             stop=[" \n"]
@@ -159,14 +159,14 @@ async def skepsi(erotisi, aiapikey):
         print(aianswer[0]["text"])
     except Exception as e:
         print(e)
-        print("error skepsi")
+        print("error aiprocess1")
         return "nope"
     return aianswer[0]["text"]
 #tivenAI
-async def skepsi2(erotisi, erotisioriginal):
+async def aiprocess2(aifinal_question, aifinal_questionoriginal):
     global totalaierrors
     request = {
-        'prompt': erotisi,
+        'prompt': aifinal_question,
         'max_new_tokens': 540,
         'preset': 'None',
         'do_sample': True,
@@ -202,18 +202,18 @@ async def skepsi2(erotisi, erotisioriginal):
 
         if response.status_code == 200:
             result = response.json()['results'][0]['text']
-            print(erotisi)
+            print(aifinal_question)
             print(result)
     except Exception as e:
         print(e)
-        print("error skepsi2")
+        print("error aiprocess2")
         totalaierrors += 1
         return "nope"
     return result
 
 #synthesize voice for AI response and broadcast it to channel
-async def omilia(apantisi):
-    command = ["espeak", "--stdout", apantisi]
+async def speech_synthesize(ai_response):
+    command = ["espeak", "--stdout", ai_response]
     wave_file = sp.Popen(command, stdout=sp.PIPE).stdout
     # converting the wave speech to pcm
 #    command = ["ffmpeg", "-i", "-", "-ac", "1", "-f", "s32le", "-"]
@@ -249,7 +249,7 @@ async def on_message(message):
     if message.author.bot: 
         return
     elif rmsg2.startswith("ICARUS 201930195036891758973189") and len(rmsg2) > 12:
-        print('panw apo 17, sinexizw.. ' + 'using key n' + str(aikeynumber))
+        print('More than 17 characters, continue.. ' + 'using key n' + str(aikeynumber))
         async with message.channel.typing():
             if totalaierrors > 2:
                 return
