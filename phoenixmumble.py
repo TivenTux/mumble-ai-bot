@@ -116,9 +116,10 @@ def onmumblemsg(text):
     rmsg = rmsg[nicknamelen:]
     try:
         usern = str(mumble.users[text.actor]['name'])
+        usern = cleanupname(usern)
     except Exception as e:
         print(e)
-        usern = 'nan'
+        usern = 'user'
     rmsg2 = text.message.upper()
 
     if text.actor == 0 or text.session:
@@ -131,6 +132,13 @@ def onmumblemsg(text):
     else:
         print('ignoring pm: ' + rmsg2)
     return
+
+#remove any special characters from user name
+def cleanupname(datainput):
+    cleanedupname=re.sub("[^A-Za-z]","",datainput)
+    cleanedupname = cleanedupname[0].upper() + cleanedupname[1:]
+    #print ('clean: ', cleanedupname)
+    return (cleanedupname)
 
 #when discord bot is ready, connect to mumble
 @client.event
@@ -148,7 +156,7 @@ async def aiprocess1(aifinal_question, aiapikey):
     try:
         openai.api_key = aiapikey
         response = openai.Completion.create(
-            model="text-davinci-003",
+            model="text-davinci-003", #available models here: https://platform.openai.com/docs/models/overview
             prompt=aifinal_question,
             temperature=0.5,
             max_tokens=485,
