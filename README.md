@@ -9,7 +9,7 @@ Get chatGPT api key here: https://platform.openai.com/account/api-keys
 
 Edit conf settings from line 12 to 40. If you use openAI's chatgpt, you do not need to edit anything on locally hosted LLM settings.
 
-_If the LLM is self hosted there is small performance drop on GGML (CPU) models with passthrough_username enabled. No performance drop on openAI._
+_If the LLM is self hosted there might be a small performance drop on GGML (CPU) models with passthrough_username enabled. No performance drop on openAI._
 
 
 ### pip packages
