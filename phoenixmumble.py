@@ -1,11 +1,9 @@
-import discord, time, os, random, requests, json
+import discord, time, os, random, requests, json, pymumble_py3, re, sys
 from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio, openai
 from time import *
-import re, sys
 import urllib, datetime
-import pymumble_py3
 from pymumble_py3.constants import *
 import subprocess as sp
 
@@ -22,10 +20,13 @@ token = '' #create bot and get the token number at https://discord.com/developer
 aihost = '127.0.0.1:9500'
 aiurl = f'http://{aihost}/api/v1/generate'
 
+#general ai settings
+passthrough_username = 1 #1 to enable, 0 to disable. Provides the user's name to the prompt (and lets the bot know who is talking with it).
+
 #mumble settings for bot
 server = "127.0.0.1"
 portnumber = 64738
-nick = "Phoenix" #if you change this, remember to edit the prompt describing the AI assistant's name in msg process function.
+nick = "Phoenix"
 passwd = ""
 bot_keyword = 'PHOENIX' #needs to be in uppercase
 bot_keyword2 = 'PHOENIX,' #needs to be in uppercase
@@ -84,8 +85,11 @@ async def handledc():
 
 #process the message and prompt
 async def msgprocess(text, usern):
-    finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named Phoenix.\nPhoenix was made by Tiven and provides helpful answers.\n" + usern + ": "
-    aifinal_question = finprompt1 + str(text) + "\nPhoenix:"
+    if passthrough_username == 1:
+        finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named " + nick + ".\n" + nick + " was made by Tiven and provides helpful answers.\n" + usern + ": "
+    elif passthrough_username == 0:
+        finprompt1 = "Below is a conversation between a user and an AI assistant named " + nick + ".\n" + nick + " was made by Tiven and provides helpful answers.\n" + "User: "
+    aifinal_question = finprompt1 + str(text) + "\n" + nick + ":"
     try:
       if aiselection == 1:
           ai_response = await aiprocess1(aifinal_question, openaikey)
