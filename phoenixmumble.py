@@ -14,7 +14,7 @@ aiselection = 1
 openaikey = '' #create api at https://platform.openai.com/account/api-keys
 
 #discord bot token
-token = '' #create bot and get the token number at https://discord.com/developers/applications
+discordtoken = '' #create bot and get the token number at https://discord.com/developers/applications
 
 #locally hosted LLM settings - use this if you dont want to use openAI and host your LM elsewhere
 aihost = '127.0.0.1:9500'
@@ -49,7 +49,7 @@ dcerrors = 0
 totalaierrors = 0
 punishedusers = []
 mumbleusercomment = ' '
-
+nicknamelen = len(nick)
 
 
 #mumble users check, not used anymore
@@ -113,7 +113,7 @@ def onmumblemsg(text):
     print('received msg.. passing through')
     print(text)
     rmsg = text.message
-    rmsg = rmsg[7:]
+    rmsg = rmsg[nicknamelen:]
     try:
         usern = str(mumble.users[text.actor]['name'])
     except Exception as e:
@@ -261,7 +261,7 @@ async def on_message(message):
         return 
 
 def Main():
-    client.run(token)   
+    client.run(discordtoken)   
 
 if __name__ == "__main__":
 #     asyncio.run(Main())
