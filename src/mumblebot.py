@@ -50,21 +50,20 @@ dcerrors = 0
 totalaierrors = 0
 punishedusers = []
 mumbleusercomment = ' '
+#check length to help with message cleaning later
 nicknamelen = len(bot_nickname)
 
 
-#mumble users check, not used anymore
-async def checkmumble():
-    serverstatus = 'unknown'
-    try:
-        status = mumble.users.count()
-        print('users:' + str(status) + '\n')
-        if status > 0:
-            serverstatus = 'ok'
-    except Exception as e:
-        print(e)
-        serverstatus = 'dc'
-    return serverstatus
+def on_start():
+    '''
+    waits for messages and prompts
+    '''
+    print('--ready--')
+    mumble.start()
+    mumble.callbacks.set_callback(PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, onmumblemsg)
+    while 1:
+        time.sleep(1)
+    return
 
 #process the message and prompt
 async def msgprocess(text, usern):
@@ -138,21 +137,10 @@ def cleanupname(datainput):
     return (cleanedupname)
 
 
-def on_start():
-    '''
-    waits for messages and prompts
-    '''
-    print('--ready--')
-    mumble.start()
-    mumble.callbacks.set_callback(PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, onmumblemsg)
-    while 1:
-        time.sleep(1)
-    return
-
 #openAI
 async def aiprocess1(aifinal_question, aiapikey):
     '''
-    Takes question and chatgpt api and returns AI response.
+    Takes question and chatgpt apikey and returns AI response.
     '''
     try:
         openai.api_key = aiapikey
@@ -171,8 +159,7 @@ async def aiprocess1(aifinal_question, aiapikey):
         aianswer = json.loads(json_data2)
         print(aianswer[0]["text"])
     except Exception as e:
-        print(e)
-        print("error aiprocess1")
+        print(e, "--error aiprocess1")
         return "nope"
     return aianswer[0]["text"]
 #tivenAI
@@ -221,8 +208,7 @@ async def aiprocess2(aifinal_question, aifinal_questionoriginal):
             print(aifinal_question)
             print(result)
     except Exception as e:
-        print(e)
-        print("error aiprocess2")
+        print(e,"--error aiprocess2")
         totalaierrors += 1
         return "nope"
     return result
@@ -242,7 +228,6 @@ async def speech_synthesize(ai_response):
     # sending speech to mumble channel
     mumble.sound_output.add_sound(sound)
     return
-
 
 
 def Main():
