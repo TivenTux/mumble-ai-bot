@@ -40,9 +40,9 @@ bot_keyword = os.environ['bot_keyword']
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
 keyfilemumble = './constants/private.pem'
-mumble = pymumble_py3.Mumble(mumble_host, bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True)
+mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True)
 if mumble_use_cert == 1:
-    mumble = pymumble_py3.Mumble(mumble_host, bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
+    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
 
 
 
@@ -126,8 +126,8 @@ def onmumblemsg(text):
     # It doesn't have a valid "actor". Simply ignore it here.
         print('ignoring pm: ' + rmsg2)
         return
-    bot_keyword = bot_keyword.upper()
-    if rmsg2.startswith(bot_keyword):
+    upper_bot_keyword = bot_keyword.upper()
+    if rmsg2.startswith(upper_bot_keyword):
         start_this_now = asyncio.run(msgprocess(rmsg, usern))
     else:
         print('ignoring pm: ' + rmsg2)
