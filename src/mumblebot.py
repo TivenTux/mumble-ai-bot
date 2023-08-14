@@ -1,3 +1,4 @@
+import os
 from time import *
 import requests
 import subprocess as sp
@@ -13,31 +14,34 @@ import openai
 #use number 1 for openAI or 2 for custom api
 aiselection = 1
 #openAI settings
-openaikey = '' #create api at https://platform.openai.com/account/api-keys
+openaikey = os.environ['openaikey'] #create api at https://platform.openai.com/account/api-keys
 
 #discord bot token
-discordtoken = '' #create bot and get the token number at https://discord.com/developers/applications
+discordtoken = os.environ['discordtoken'] #create bot and get the token number at https://discord.com/developers/applications
 
-#locally hosted LLM settings - use this if you dont want to use openAI and host your LM elsewhere
+#hosted LLM settings - use this if you dont want to use openAI and host your LLM elsewhere
 aihost = '127.0.0.1:9500'
 aiurl = f'http://{aihost}/api/v1/generate'
 
 #general ai settings
-passthrough_username = 1 #1 to enable, 0 to disable. Provides the user's name to the prompt (and lets the bot know who is talking with it).
+pass_username = 1 #1 to enable, 0 to disable. Provides the user's name to the prompt (and lets the bot know who is talking with it).
 
 #mumble settings for bot
-server = "127.0.0.1"
-portnumber = 64738
-nick = "Phoenix"
-passwd = ""
-bot_keyword = 'PHOENIX' #needs to be in uppercase
-bot_keyword2 = 'PHOENIX,' #needs to be in uppercase
+mumble_host = os.environ['mumble_host']
+portnumber = os.environ['portnumber']
+bot_nickname = os.environ['bot_nickname']
+#if passwd is set, use it else dont use pass
+if environ.get('mumble_passwd') is not None:
+    mumble_passwd = os.environ['mumble_passwd']
+else:
+    mumble_passwd = ''
+bot_keyword = os.environ['bot_keyword']
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
 keyfilemumble = './constants/private.pem'
-mumble = pymumble_py3.Mumble(server, nick, port=portnumber, password=passwd, reconnect=True)
+mumble = pymumble_py3.Mumble(mumble_host, bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True)
 if mumble_use_cert == 1:
-    mumble = pymumble_py3.Mumble(server, nick, port=portnumber, password=passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
+    mumble = pymumble_py3.Mumble(mumble_host, bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
 
 
 
@@ -51,7 +55,7 @@ dcerrors = 0
 totalaierrors = 0
 punishedusers = []
 mumbleusercomment = ' '
-nicknamelen = len(nick)
+nicknamelen = len(bot_nickname)
 
 
 #mumble users check, not used anymore
@@ -87,11 +91,11 @@ async def handledc():
 
 #process the message and prompt
 async def msgprocess(text, usern):
-    if passthrough_username == 1:
-        finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named " + nick + ".\n" + nick + " was made by Tiven and provides helpful answers.\n" + usern + ": "
-    elif passthrough_username == 0:
-        finprompt1 = "Below is a conversation between a user and an AI assistant named " + nick + ".\n" + nick + " was made by Tiven and provides helpful answers.\n" + "User: "
-    aifinal_question = finprompt1 + str(text) + "\n" + nick + ":"
+    if pass_username == 1:
+        finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + usern + ": "
+    elif pass_username == 0:
+        finprompt1 = "Below is a conversation between a user and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + "User: "
+    aifinal_question = finprompt1 + str(text) + "\n" + bot_nickname + ":"
     try:
       if aiselection == 1:
           ai_response = await aiprocess1(aifinal_question, openaikey)
@@ -126,11 +130,12 @@ def onmumblemsg(text):
     rmsg2 = text.message.upper()
 
     if text.actor == 0 or text.session:
-    # Some server will send a welcome message to the bot once connected.
+    # Some servers will send a welcome message to the bot once connected.
     # It doesn't have a valid "actor". Simply ignore it here.
         print('ignoring pm: ' + rmsg2)
         return
-    if rmsg2.startswith(bot_keyword) or rmsg2.startswith(bot_keyword2):
+    bot_keyword = bot_keyword.upper()
+    if rmsg2.startswith(bot_keyword):
         start_this_now = asyncio.run(msgprocess(rmsg, usern))
     else:
         print('ignoring pm: ' + rmsg2)
@@ -235,7 +240,7 @@ async def speech_synthesize(ai_response):
     command = ["ffmpeg", "-i", "-", "-ac", "1", "-f", 's16le', '-ar', '48000', '-']
     sound = sp.Popen(command, stdout=sp.PIPE, stderr=sp.DEVNULL,
                      stdin=wave_file).stdout.read()
-    # sending speech to server
+    # sending speech to mumble channel
     mumble.sound_output.add_sound(sound)
     return
 
