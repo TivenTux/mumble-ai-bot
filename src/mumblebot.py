@@ -1,11 +1,13 @@
-import discord, time, os, random, requests, json, pymumble_py3, re, sys
-from discord.ext.commands import Bot
-from discord.ext import commands
-import asyncio, openai
 from time import *
-import urllib, datetime
-from pymumble_py3.constants import *
+import requests
 import subprocess as sp
+import json
+import pymumble_py3
+import re
+import asyncio
+from pymumble_py3.constants import *
+import discord
+import openai
 
 ############ conf ############
 #use number 1 for openAI or 2 for custom api
