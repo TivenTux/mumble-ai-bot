@@ -72,26 +72,11 @@ async def checkmumble():
         serverstatus = 'dc'
     return serverstatus
 
-def onmumbledisconnect():
-    mumble.connect()
-    print('connection dropped reconnecting..')
-    #run_dc_handler = asyncio.run(handledc())
-    return
-
-def exit_program():
-    global dcerrors
-    dcerrors += 1
-    print("Exiting the program...")
-    quit()
-
-#handle disconnects, not used anymore
-async def handledc():
-    mumble.connect()
-    await asyncio.sleep(4)
-    return
-
 #process the message and prompt
 async def msgprocess(text, usern):
+    '''
+    Takes text and username, processes the prompt and calls openAI,SpeechSynth and msgsend.
+    '''
     if pass_username == 1:
         finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + usern + ": "
     elif pass_username == 0:
@@ -110,6 +95,9 @@ async def msgprocess(text, usern):
 
 #reply in mumble channel
 async def msgsend(ai_response):
+    '''
+    Takes AI response and sends it to the mumble channel.
+    '''
     msg = ai_response.encode('utf-8', 'ignore').decode('utf-8')
     mumblechan = mumble.channels[mumble.users.myself['channel_id']]
     mumblechan.send_text_message(msg)
@@ -117,6 +105,9 @@ async def msgsend(ai_response):
 
 #clean up message, find author and forward
 def onmumblemsg(text):
+    '''
+    Takes message text, gets author's name and forwards it.
+    '''
     print('received msg.. passing through')
     print(text)
     rmsg = text.message
@@ -144,6 +135,9 @@ def onmumblemsg(text):
 
 #remove any special characters from user name
 def cleanupname(datainput):
+    '''
+    Takes username and removes any special characters.
+    '''
     cleanedupname=re.sub("[^A-Za-z]","",datainput)
     cleanedupname = cleanedupname[0].upper() + cleanedupname[1:]
     #print ('clean: ', cleanedupname)
@@ -152,6 +146,9 @@ def cleanupname(datainput):
 #when discord bot is ready, connect to mumble
 @client.event
 async def on_ready():
+    '''
+    After discord client is ready, runs main program.
+    '''
     print('Logged in as', client.user.name)
     print('--ready--')
     mumble.start()
@@ -162,6 +159,9 @@ async def on_ready():
 
 #openAI
 async def aiprocess1(aifinal_question, aiapikey):
+    '''
+    Takes question and chatgpt api and returns AI response.
+    '''
     try:
         openai.api_key = aiapikey
         response = openai.Completion.create(
@@ -185,6 +185,9 @@ async def aiprocess1(aifinal_question, aiapikey):
     return aianswer[0]["text"]
 #tivenAI
 async def aiprocess2(aifinal_question, aifinal_questionoriginal):
+    '''
+    Takes question and original question, and returns AI response.
+    '''
     global totalaierrors
     request = {
         'prompt': aifinal_question,
@@ -234,6 +237,9 @@ async def aiprocess2(aifinal_question, aifinal_questionoriginal):
 
 #synthesize voice for AI response and broadcast it to channel
 async def speech_synthesize(ai_response):
+    '''
+    Takes AI response, generates speech and sends to the channel.
+    '''
     command = ["espeak", "--stdout", ai_response]
     wave_file = sp.Popen(command, stdout=sp.PIPE).stdout
     # converting the wave speech to pcm
