@@ -1,6 +1,6 @@
 import os
 from os import environ
-from time import *
+import time
 import requests
 import subprocess as sp
 import json
@@ -16,9 +16,6 @@ import openai
 aiselection = 1
 #openAI settings
 openaikey = os.environ['openaikey'] #create api at https://platform.openai.com/account/api-keys
-
-#discord bot token
-discordtoken = os.environ['discordtoken'] #create bot and get the token number at https://discord.com/developers/applications
 
 #hosted LLM settings - use this if you dont want to use openAI and host your LLM elsewhere
 aihost = '127.0.0.1:9500'
@@ -37,6 +34,7 @@ if environ.get('mumble_passwd') is not None:
 else:
     mumble_passwd = ''
 bot_keyword = os.environ['bot_keyword']
+
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
 keyfilemumble = './constants/private.pem'
@@ -46,11 +44,7 @@ if mumble_use_cert == 1:
 
 
 
-
 #init some stuff
-intents = discord.Intents().all()
-intents.members = True
-client = discord.Client(prefix='', intents=intents)
 aikeynumber = 0
 dcerrors = 0
 totalaierrors = 0
@@ -143,19 +137,17 @@ def cleanupname(datainput):
     #print ('clean: ', cleanedupname)
     return (cleanedupname)
 
-#when discord bot is ready, connect to mumble
-@client.event
-async def on_ready():
+
+def on_start():
     '''
-    After discord client is ready, runs main program.
+    waits for messages and prompts
     '''
-    print('Logged in as', client.user.name)
     print('--ready--')
     mumble.start()
-    await asyncio.sleep(5)
-    #serverstatus = await checkmumble()
-    #print(serverstatus)
-    await background_loop()
+    mumble.callbacks.set_callback(PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, onmumblemsg)
+    while 1:
+        time.sleep(1)
+    return
 
 #openAI
 async def aiprocess1(aifinal_question, aiapikey):
@@ -251,41 +243,12 @@ async def speech_synthesize(ai_response):
     mumble.sound_output.add_sound(sound)
     return
 
-#no loop yet
-async def background_loop():
-    global totalaierrors
-    global dcerrors
-    await client.wait_until_ready()
-    #mumble.callbacks.set_callback(PYMUMBLE_CLBK_DISCONNECTED, exit_program)
-    mumble.callbacks.set_callback(PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, onmumblemsg)
-    backcounter = 0
-    return
 
-#discord stuff, not ready yett
-@client.event
-async def on_message(message): 
-    rmsg = message.content
-    global aikeynumber, totalaierrors
-    channel = message.channel
-    rmsg2 = rmsg.upper()
-    chn = channel
-    author = message.author.id
-
-    if message.author == client.user:
-        return
-    if message.author.bot: 
-        return
-    elif rmsg2.startswith("ICARUS 201930195036891758973189") and len(rmsg2) > 12:
-        print('More than 17 characters, continue.. ' + 'using key n' + str(aikeynumber))
-        async with message.channel.typing():
-            if totalaierrors > 2:
-                return
-            
-        return 
 
 def Main():
-    client.run(discordtoken)   
+    on_start()  
 
 if __name__ == "__main__":
-#     asyncio.run(Main())
     Main()
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(Main())
