@@ -1,13 +1,19 @@
-# Phoenix - Mumble AI Bot
+## Mumble AI Bot
 Mumble bot with speech synthesizer that uses openAI or self hosted LLM
 
 
 If you have issues with the speech synthesizer voice, please check your conf files under /etc/speech-dispatcher
-Some discord functions are planned for the future so please create a discord app, and get the bot's token here: https://discord.com/developers/applications It's needed for configuration.
+Some discord functions are planned for the future so please create a discord app, and get the bot's token here: https://discord.com/developers/applications 
 
-Get chatGPT api key here: https://platform.openai.com/account/api-keys
+Set ENV variables:  
 
-Edit conf settings from line 12 to 40. If you use openAI's chatgpt, you do not need to edit anything on locally hosted LLM settings.
+**openaikey** - your chatGPT api(https://platform.openai.com/account/api-keys) <br>
+**discordtoken** - your discord bot token(https://discord.com/developers/applications) <br> 
+**mumble_host** - Mumble server host address <br>
+**portnumber** - Mumble server port number <br> 
+**bot_nickname** - Set the bot's name.<br>
+**mumble_passwd** - Mumble server password. Do not set if none.<br>
+**bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
 
 _If the LLM is self hosted there might be a small performance drop on GGML (CPU) models with passthrough_username enabled. No performance drop on openAI._
 
