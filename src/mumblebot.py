@@ -113,6 +113,7 @@ def onmumblemsg(text):
     print('received msg.. passing through')
     print(text)
     rmsg = text.message
+    #get username from message and process the rest of the message
     rmsg = rmsg[nicknamelen:]
     try:
         usern = str(mumble.users[text.actor]['name'])
