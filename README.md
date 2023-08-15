@@ -1,9 +1,7 @@
 ## Mumble AI Bot
 Mumble bot with speech synthesizer that uses openAI or self hosted LLM
 
-
 If you have issues with the speech synthesizer voice, please check your conf files under /etc/speech-dispatcher
-Some discord functions are planned for the future so please create a discord app, and get the bot's token here: https://discord.com/developers/applications 
 
 Set ENV variables:  
 
@@ -14,16 +12,22 @@ Set ENV variables:
 **mumble_passwd** - Mumble server password. Do not set if none.<br>
 **bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
 
-### pip packages
-
+You can specify these environment variables when starting the container using the `-e` command-line option as documented
+[here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
+```bash
+$ docker run -e "openaikey=yy"
 ```
-pymumble, discord, openai
 
+## Building the container
+
+After having cloned this repository, you can run
+```bash
+$ docker build -t mumble-ai-bot .
 ```
 
-### os deps
+## Running the container
 
-```
-espeak, ffmpeg
+```bash
+$ docker run -d -e "openaikey=yyy" -e "mumble_host=yyy" -e "portnumber=yyy" -e "bot_nickname=yyy" -e "bot_keyword=yyy" mumble-ai-bot
 
 ```
