@@ -3,7 +3,10 @@ Mumble bot with speech synthesizer that uses openAI or self hosted LLM
 
 If you have issues with the speech synthesizer voice, please check your conf files under /etc/speech-dispatcher
 
-Set ENV variables:  
+Docker image is available for download on
+**[Dockerhub](https://hub.docker.com/repository/docker/tiventux/mumble-ai-bot)**.
+
+## Environment Variables
 
 **openaikey** - your chatGPT api(https://platform.openai.com/account/api-keys) <br>
 **mumble_host** - Mumble server host address <br>
@@ -17,6 +20,15 @@ You can specify these environment variables when starting the container using th
 ```bash
 $ docker run -e "openaikey=yy"
 ```
+
+## Running the pre-built docker image
+
+If you just want to run the pre-built docker image, you can run
+```bash
+docker run --name=mumble-ai-bot -d -e "openaikey=yyy" -e "mumble_host=yyy" -e "portnumber=yyy" -e "bot_nickname=yyy" -e "bot_keyword=yyy" tiventux/mumble-ai-bot:latest
+
+```
+
 
 ## Building the container
 
