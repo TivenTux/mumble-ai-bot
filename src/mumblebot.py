@@ -56,7 +56,7 @@ nicknamelen = len(bot_nickname)
 
 def on_start():
     '''
-    waits for messages and prompts
+    start library thread and connection process
     '''
     print('--ready--')
     mumble.start()
@@ -65,28 +65,47 @@ def on_start():
         time.sleep(1)
     return
 
-#process the message and prompt
+def finPrompt(text, username=""):
+    '''
+    Takes question text and username (if any) and returns final prompt.
+    '''
+    if username != "":
+        return "Below is a conversation between a user named " + username + " and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + username + ": " + text + "\n" + bot_nickname + ":"
+    else:
+        return "Below is a conversation between a user and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + "User: " + text + "\n" + bot_nickname + ":"
+
 async def msgprocess(text, usern):
     '''
     Takes text and username, processes the prompt and calls openAI,SpeechSynth and msgsend.
     '''
-    if pass_username == 1:
-        finprompt1 = "Below is a conversation between a user named " + usern + " and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + usern + ": "
-    elif pass_username == 0:
-        finprompt1 = "Below is a conversation between a user and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + "User: "
-    aifinal_question = finprompt1 + str(text) + "\n" + bot_nickname + ":"
     try:
-      if aiselection == 1:
-          ai_response = await aiprocess1(aifinal_question, openaikey)
-      else:
-          ai_response = await aiprocess2(aifinal_question, str(text))
+        if aiselection == 1:
+            if pass_username == 1:
+                aifinal_question = finPrompt(text, usern)
+                ai_response = await aiprocess1(aifinal_question, openaikey)
+            else:
+                aifinal_question = finPrompt(text)
+                ai_response = await aiprocess1(aifinal_question, openaikey)
+        if aiselection == 2:
+            if pass_username == 1:
+                aifinal_question = finPrompt(text, usern)
+                ai_response = await aiprocess2(aifinal_question, text)
+            else:
+                aifinal_question = finPrompt(text)
+                ai_response = await aiprocess2(aifinal_question, text)
     except Exception as e:
-        print(e)
-    await speech_synthesize(ai_response)
-    await msgsend(ai_response)
+        print(e, 'ai api error')
+        return
+    try:
+        await speech_synthesize(ai_response)
+    except Exception as e:
+        print(e, 'speech synthesizer error')
+    try:
+        await msgsend(ai_response)
+    except Exception as e:
+        print(e, 'mumble text send error')
     return
 
-#reply in mumble channel
 async def msgsend(ai_response):
     '''
     Takes AI response and sends it to the mumble channel.
@@ -111,7 +130,7 @@ def onmumblemsg(text):
         usern = cleanupname(usern)
     except Exception as e:
         print(e)
-        usern = 'user'
+        usern = ''
     rmsg2 = text.message.upper()
 
     if text.actor == 0 or text.session:
