@@ -49,6 +49,10 @@ if environ.get('bot_keyword') is not None:
     bot_keyword = os.environ['bot_keyword']
 else:
     bot_keyword = 'Phoenix'
+if environ.get('default_channel_name') is not None:
+    default_channel_name = os.environ['default_channel_name']
+else:
+    default_channel_name = ''
 
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
@@ -73,8 +77,11 @@ def on_start():
     '''
     start library thread and connection process
     '''
-    print('--ready--')
     mumble.start()
+    mumble.is_ready()
+    print('--ready--')
+    if default_channel_name is not None:
+        join_channel(default_channel_name)
     mumble.callbacks.set_callback(PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, onmumblemsg)
     while 1:
         time.sleep(1)
@@ -88,6 +95,20 @@ def finPrompt(text, username=""):
         return "Below is a conversation between a user named " + username + " and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + username + ": " + text + "\n" + bot_nickname + ":"
     else:
         return "Below is a conversation between a user and an AI assistant named " + bot_nickname + ".\n" + bot_nickname + " was made by Tiven and provides helpful answers.\n" + "User: " + text + "\n" + bot_nickname + ":"
+
+def join_channel(channel_name):
+    '''
+    Takes channel_name and tries to join that channel.
+    '''
+    try:
+        if '/' in channel_name:
+            mumble.channels.find_by_tree(channel_name.split('/')).move_in()
+        else:
+            mumble.channels.find_by_name(channel_name).move_in()
+    except Exception as e:
+        print(e," cannot join channel")
+        return 'error'
+    return
 
 async def msgprocess(text, usern):
     '''
