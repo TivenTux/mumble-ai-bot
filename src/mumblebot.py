@@ -15,7 +15,11 @@ import openai
 #use number 1 for openAI or 2 for custom api
 aiselection = 1
 #openAI settings
-openaikey = os.environ['openaikey'] #create api at https://platform.openai.com/account/api-keys
+#create api at https://platform.openai.com/account/api-keys
+if environ.get('openaikey') is not None:
+    openaikey = os.environ['openaikey']
+else:
+    openaikey = ''
 
 #hosted LLM settings - use this if you dont want to use openAI and host your LLM elsewhere
 aihost = '127.0.0.1:9500'
@@ -25,15 +29,27 @@ aiurl = f'http://{aihost}/api/v1/generate'
 pass_username = 1 #1 to enable, 0 to disable. Provides the user's name to the prompt (and lets the bot know who is talking with it).
 
 #mumble settings for bot
-mumble_host = os.environ['mumble_host']
-portnumber = os.environ['portnumber']
-bot_nickname = os.environ['bot_nickname']
+if environ.get('mumble_host') is not None:
+    mumble_host = os.environ['mumble_host']
+else:
+    mumble_host = '127.0.0.1'
+if environ.get('portnumber') is not None:
+    portnumber = os.environ['portnumber']
+else:
+    portnumber = '64738'
+if environ.get('bot_nickname') is not None:
+    bot_nickname = os.environ['bot_nickname']
+else:
+    bot_nickname = 'Phoenix'
 #if passwd is set, use it else dont use pass
 if environ.get('mumble_passwd') is not None:
     mumble_passwd = os.environ['mumble_passwd']
 else:
     mumble_passwd = ''
-bot_keyword = os.environ['bot_keyword']
+if environ.get('bot_keyword') is not None:
+    bot_keyword = os.environ['bot_keyword']
+else:
+    bot_nickname = 'Phoenix'
 
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
