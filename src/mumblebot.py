@@ -8,7 +8,6 @@ import pymumble_py3
 import re
 import asyncio
 from pymumble_py3.constants import *
-import discord
 import openai
 
 ############ conf ############
