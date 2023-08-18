@@ -6,7 +6,7 @@ If you have issues with the speech synthesizer voice, please check your conf fil
 Docker image is available for download on
 **[Dockerhub](https://hub.docker.com/repository/docker/tiventux/mumble-ai-bot)**.
 
-## Environment Variables
+## Environmental Variables
 
 **openaikey** - your chatGPT api(https://platform.openai.com/account/api-keys) <br>
 **mumble_host** - Mumble server host address <br>
@@ -14,6 +14,7 @@ Docker image is available for download on
 **bot_nickname** - Set the bot's name.<br>
 **mumble_passwd** - Mumble server password. Do not set if none.<br>
 **bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
+**default_channel_name** - Name of the channel that the bot will try to join after connecting.<br>
 
 You can specify these environment variables when starting the container using the `-e` command-line option as documented
 [here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
