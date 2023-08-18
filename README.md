@@ -18,7 +18,7 @@ Docker image is available for download on
 You can specify these environment variables when starting the container using the `-e` command-line option as documented
 [here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
 ```bash
-$ docker run -e "openaikey=yy"
+docker run -e "openaikey=yy"
 ```
 
 ## Running the pre-built docker image
@@ -34,12 +34,12 @@ docker run --name=mumble-ai-bot -d -e "openaikey=yyy" -e "mumble_host=yyy" -e "p
 
 After having cloned this repository, you can run
 ```bash
-$ docker build -t mumble-ai-bot .
+docker build -t mumble-ai-bot .
 ```
 
 ## Running the container
 
 ```bash
-$ docker run -d -e "openaikey=yyy" -e "mumble_host=yyy" -e "portnumber=yyy" -e "bot_nickname=yyy" -e "bot_keyword=yyy" mumble-ai-bot
+docker run -d -e "openaikey=yyy" -e "mumble_host=yyy" -e "portnumber=yyy" -e "bot_nickname=yyy" -e "bot_keyword=yyy" mumble-ai-bot
 
 ```
