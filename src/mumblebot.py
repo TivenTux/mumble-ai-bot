@@ -48,7 +48,7 @@ else:
 if environ.get('bot_keyword') is not None:
     bot_keyword = os.environ['bot_keyword']
 else:
-    bot_nickname = 'Phoenix'
+    bot_keyword = 'Phoenix'
 
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
