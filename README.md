@@ -14,7 +14,7 @@ Docker image is available for download on
 **bot_nickname** - Set the bot's name.<br>
 **mumble_passwd** - Mumble server password. Do not set if none.<br>
 **bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
-**default_channel_name** - Name of the channel that the bot will try to join after connecting.<br>
+**default_channel_name** - After connecting, bot will join this channel.<br>
 
 You can specify these environment variables when starting the container using the `-e` command-line option as documented
 [here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
