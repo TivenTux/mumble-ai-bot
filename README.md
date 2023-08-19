@@ -1,8 +1,6 @@
 ## Mumble AI Bot
 Mumble bot with speech synthesizer that uses openAI or self hosted LLM
 
-If you have issues with the speech synthesizer voice, please check your conf files under /etc/speech-dispatcher
-
 Docker image is available for download on
 **[Dockerhub](https://hub.docker.com/repository/docker/tiventux/mumble-ai-bot)**.
 
