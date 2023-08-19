@@ -53,17 +53,28 @@ if environ.get('default_channel_name') is not None:
     default_channel_name = os.environ['default_channel_name']
 else:
     default_channel_name = ''
-
+#speech synthesizer settings
+if environ.get('word_gap_ms') is not None:
+    word_gap_ms = os.environ['word_gap_ms']
+else:
+    word_gap_ms = '5' #gap between each word, in milliseconds. default 5
+if environ.get('words_per_min') is not None:
+    words_per_min = os.environ['words_per_min']
+else:
+    words_per_min = '185' #speech speed in words per minute. default 185
+    
 mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
 certfilemumble = './constants/public.pem'
 keyfilemumble = './constants/private.pem'
-mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True)
-if mumble_use_cert == 1:
-    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
 
 
 
 #init some stuff
+mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True)
+if mumble_use_cert == 1:
+    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
+words_per_min = '-s ' + str(words_per_min)
+word_gap_ms = '-g ' + str(word_gap_ms)
 aikeynumber = 0
 dcerrors = 0
 totalaierrors = 0
@@ -273,7 +284,7 @@ async def speech_synthesize(ai_response):
     '''
     Takes AI response, generates speech and sends to the channel.
     '''
-    command = ["espeak", "--stdout", ai_response]
+    command = ["espeak", word_gap_ms, words_per_min, "--stdout", ai_response]
     wave_file = sp.Popen(command, stdout=sp.PIPE).stdout
     # converting the wave speech to pcm
 #    command = ["ffmpeg", "-i", "-", "-ac", "1", "-f", "s32le", "-"]
