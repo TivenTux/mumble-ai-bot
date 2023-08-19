@@ -15,6 +15,8 @@ Docker image is available for download on
 **mumble_passwd** - Mumble server password. Do not set if none.<br>
 **bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
 **default_channel_name** - After connecting, bot will join this channel.<br>
+**words_per_min** -  = Speech synth speed, words per minute. Default 185<br>
+**word_gap_ms** -  = Speech synth gap between words. Default 5ms<br>
 
 You can specify these environment variables when starting the container using the `-e` command-line option as documented
 [here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
