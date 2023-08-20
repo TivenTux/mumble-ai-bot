@@ -6,7 +6,7 @@ Docker image is available for download on
 
 ## Environmental Variables
 
-**openaikey** - your chatGPT api(https://platform.openai.com/account/api-keys) <br>
+**openaikey** - your chatGPT api key (https://platform.openai.com/account/api-keys) <br>
 **mumble_host** - Mumble server host address <br>
 **portnumber** - Mumble server port number <br> 
 **bot_nickname** - Set the bot's name.<br>
