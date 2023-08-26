@@ -62,17 +62,21 @@ if environ.get('words_per_min') is not None:
     words_per_min = os.environ['words_per_min']
 else:
     words_per_min = '185' #speech speed in words per minute. default 185
-    
-mumble_use_cert = 0 #change to 1 if you want to use certificate. remember to generate it first
-certfilemumble = './constants/public.pem'
-keyfilemumble = './constants/private.pem'
+#certificate settings. Enable with 1, disable with 0. Default disabled.
+if environ.get('mumble_use_cert') is not None:
+    mumble_use_cert = os.environ['mumble_use_cert']
+else:
+    mumble_use_cert = '0'
 
 
 
 #init some stuff
-mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True)
-if mumble_use_cert == 1:
-    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=portnumber, password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
+certfilemumble = './cert/public.pem'
+keyfilemumble = './cert/private.pem'
+if int(mumble_use_cert) == 1:
+    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True, certfile=certfilemumble, keyfile=keyfilemumble)
+else:
+    mumble = pymumble_py3.Mumble(str(mumble_host), bot_nickname, port=int(portnumber), password=mumble_passwd, reconnect=True)
 words_per_min = '-s ' + str(words_per_min)
 word_gap_ms = '-g ' + str(word_gap_ms)
 aikeynumber = 0
@@ -88,6 +92,16 @@ def on_start():
     '''
     start library thread and connection process
     '''
+    if int(mumble_use_cert) == 1:
+        if check_for_cert() == 1:
+            print('cert exists, continue')
+        else:
+            try:
+                generate_private_key()
+                generate_certificate()
+            except Exception as e:
+                print(e, ' cant generate key/cert')
+                return
     mumble.start()
     mumble.is_ready()
     print('--ready--')
@@ -97,6 +111,39 @@ def on_start():
     while 1:
         time.sleep(1)
     return
+
+def check_for_cert():
+    '''
+    Checks to see if certificate exists.
+    '''
+    if os.path.isfile(certfilemumble) == True:
+        print('cert here')
+        return 1
+    else:
+        print('cert missing')
+        return 0
+
+def generate_private_key():
+    '''
+    Generates private key
+    '''
+    if check_for_cert() == 1:
+        print('file exists, aborting')
+    else:
+        print('cert not here, generating priv key')
+        generate_private_key = sp.run(f'openssl genrsa -out {keyfilemumble} 2048', capture_output=True, text=True, shell=True).stderr
+        print(generate_private_key)
+    return
+
+def generate_certificate():
+    '''
+    Generates self signed certificate
+    '''
+    print('generating certificate')
+    generate_certificate = sp.run(f'openssl req -x509 -batch -days 1000 -new -key {keyfilemumble} -out {certfilemumble}', capture_output=True, text=True, shell=True).stderr
+    print(generate_certificate)
+    return
+
 
 def finPrompt(text, username=""):
     '''
