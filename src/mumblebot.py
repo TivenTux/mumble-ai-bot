@@ -112,38 +112,64 @@ def on_start():
         time.sleep(1)
     return
 
-def check_for_cert():
+def check_for_cert(certfile=certfilemumble):
     '''
     Checks to see if certificate exists.
-    '''
-    if os.path.isfile(certfilemumble) == True:
+    '''     
+    if os.path.isfile(certfile) == True:
         print('cert here')
         return 1
     else:
         print('cert missing')
         return 0
 
-def generate_private_key():
+def generate_private_key(keyfile=keyfilemumble):
     '''
     Generates private key
     '''
     if check_for_cert() == 1:
         print('file exists, aborting')
     else:
-        print('cert not here, generating priv key')
-        generate_private_key = sp.run(f'openssl genrsa -out {keyfilemumble} 2048', capture_output=True, text=True, shell=True).stderr
-        print(generate_private_key)
+        try:
+            print('cert not here, generating priv key')
+            #use stderr for openssl
+            generate_private_key = sp.run(f'openssl genrsa -out {keyfile} 2048', capture_output=True, text=True, shell=True).stderr
+            print(generate_private_key)
+            #if it succeeds it doesnt return an error message
+            if len(generate_private_key) > 7:
+                return 0
+            else:
+                return 1
+        except Exception as e:
+            print(e)
+            return 0
     return
 
-def generate_certificate():
+def generate_certificate(keyfile=keyfilemumble, certfile=certfilemumble):
     '''
     Generates self signed certificate
     '''
     print('generating certificate')
-    generate_certificate = sp.run(f'openssl req -x509 -batch -days 1000 -new -key {keyfilemumble} -out {certfilemumble}', capture_output=True, text=True, shell=True).stderr
+    generate_certificate = sp.run(f'openssl req -x509 -batch -days 1000 -new -key {keyfile} -out {certfile}', capture_output=True, text=True, shell=True).stderr
     print(generate_certificate)
-    return
+    if len(generate_certificate) > 7:
+        return 0
+    else:
+        return 1
 
+def remove_key_cert_files(keyfile=keyfilemumble, certfile=certfilemumble):
+    '''
+    Deletes self signed certificate and private key
+    '''
+    print('deleting certificate and key')
+    try:
+        command1 = sp.run(f'rm {keyfile}', capture_output=True, text=True, shell=True).stdout
+        command2 = sp.run(f'rm {certfile}', capture_output=True, text=True, shell=True).stdout
+        print(command1, command2)
+    except Exception as e:
+        print(e)
+        return 0
+    return 1
 
 def finPrompt(text, username=""):
     '''
