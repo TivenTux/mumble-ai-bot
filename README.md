@@ -6,16 +6,18 @@ Docker image is available for download on
 
 ## Environmental Variables
 
-**openaikey** - your chatGPT api key (https://platform.openai.com/account/api-keys) <br>
-**mumble_host** - Mumble server host address <br>
-**portnumber** - Mumble server port number <br> 
-**bot_nickname** - Set the bot's name.<br>
-**mumble_passwd** - Mumble server password. Do not set if none.<br>
-**bot_keyword** - Keyword which the bot will respond to. Usually same as with bot's name.<br>
-**default_channel_name** - If set, bot will join this channel after connecting.<br>
-**words_per_min** - Speech synth speed, words per minute. Default 185<br>
-**word_gap_ms** - Speech synth gap between words. Default 5ms<br>
-**mumble_use_cert** - Use certificate. Set 1 to enable, 0 to disable. Default disabled.<br>
+| Environment Variable             | Description                                                                         |
+|----------------------------------|-------------------------------------------------------------------------------------|
+| `openaikey`                      | Your openAI api key (https://platform.openai.com/account/api-keys)                  |
+| `mumble_host`                    | Mumble server host address.                                                         |
+| `portnumber`                     | Mumble server port number.                                                          |
+| `bot_nickname`                   | Set the bot's name.                                                                 |
+| `mumble_passwd`                  | Mumble server password. Do not set if none.                                         |
+| `bot_keyword`                    | Keyword which the bot will respond to. Usually same as with bot's name.             |
+| `default_channel_name`           | If set, bot will join this channel after connecting.                                |
+| `words_per_min`                  |  Speech synth speed, words per minute. Default `185`.                               |
+| `word_gap_ms`                    | Speech synth gap between words. Default `5`ms.                                      |
+| `mumble_use_cert`                | Option to use certificate. Set 1 to enable, 0 to disable. Default `disabled`.       
 
 You can specify these environment variables when starting the container using the `-e` command-line option as documented
 [here](https://docs.docker.com/engine/reference/run/#env-environment-variables):
