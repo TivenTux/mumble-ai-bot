@@ -2,7 +2,7 @@
 Mumble bot with speech synthesizer that uses openAI or self hosted LLM
 
 Docker image is available for download on
-**[Dockerhub](https://hub.docker.com/repository/docker/tiventux/mumble-ai-bot)**.
+**[Dockerhub](https://hub.docker.com/r/tiventux/mumble-ai-bot)**.
 
 ## Environmental Variables
 
