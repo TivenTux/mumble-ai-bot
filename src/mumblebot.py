@@ -284,7 +284,8 @@ async def aiprocess1(aifinal_question, aiapikey):
     try:
         openai.api_key = aiapikey
         response = openai.Completion.create(
-            model="text-davinci-003", #available models here: https://platform.openai.com/docs/models/overview
+            model="gpt-3.5-turbo-instruct", #text-davinci-003 is getting deprecated soon
+            #model="text-davinci-003", #available models here: https://platform.openai.com/docs/models/overview
             prompt=aifinal_question,
             temperature=0.5,
             max_tokens=485,
